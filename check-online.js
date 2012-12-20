@@ -21,7 +21,7 @@ var checkOnline = function checkOnlineF(resultCallback) {
     $.ajax({
       cache: false,
       timeout: 2800, //you could decrese this, and automatically assume offline if the internet is just CRAWLING
-      url: location.origin + '/onlineCheck.' + Math.random() * 99999999999999999 + '.css'
+      url: location.protocol + '//' + location.hostname + '/onlineCheck.' + Math.random() * 99999999999999999 + '.css'
     })
     .done(function onlineCheckDone(resp) {
       if (resp.indexOf('success') > -1) {
