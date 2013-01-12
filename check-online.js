@@ -1,4 +1,5 @@
 /**
+ * github.com/devinrhode2/check-online MIT licensened
  * Example:
  * checkOnline(function(online) {
  *   if (online) {
@@ -8,24 +9,68 @@
  *   }
  * });
  * 
- * !IMPORTANT expects /onlineCheck.css to contain just 'success'
+ * When you're working with a jQuery ajax failure, you can pass the fail callback `arguments`
+ * as a second parameter to check offline, to potentially short circuit the operation
+ * - if the failure looks like it was from being offline, we'll double check you're offline
+ * - if the args describe an ajax or other error, you're online (therefore, you might want to track and report this ajax error)
+ * - if you omit the second arg, things work just as expected.
+ * 
+ * !IMPORTANT expects /onlineCheck.json to contain just 'online'
  * Your server also needs to support filename based cache busting, which html5 boilerplate's .htaccess file has for you
  * but you will need to add json to the list of file extensions list.
  */
-var checkOnline = function checkOnlineF(resultCallback) {
+var checkOnline = function checkOnlineF(resultCallback, jQueryXhrFailArgs) {
   if (navigator.onLine) {
+    
+    //if no jQueryXhrFailArgs, nothing happens.
+    if (jQueryXhrFailArgs != null) { //compare to null because maybe it's some other falsey value..
+      var arg = [].slice.call(jQueryXhrFailArgs, 0); //in case you pass in the vanilla `arguments`
+      
+      if (!arg[3]) {
+        arg[3] = arg[0].getAllResponseHeaders(); //if we got no response we should have no response headers
+        //so this is expected to be the empty string
+      }
+      
+      //If we have all these exact args and no headers, it's very likely we're offline.
+      //-Otherwise, we have an explcit ajax error
+      //If this proves fragile, then this if level can be removed, and the else branch deleted.
+      if (   arg[0].responseText !== 0
+          || arg[0].status       !== 0
+          || arg[0].readyState   !== ''
+          || arg[0].statusText   !== 'error'
+          || arg[1]              !== 'error'
+          || arg[2] !== ''
+          || arg[3] !== ''//result from .getAllResponseHeaders(). We should have no response headers, because we didn't get a response
+         )
+         //else if jQueryFailArgs differ from the above, there's some ajax error that isn't EXACTLY the error args from being offline.
+      {
+        console.log('checkOnline thinks these args describe an ajax failure (and you\'re online):' +
+                    '\n' + JSON.stringify(arg) +
+                    '\ncheckOnline reads these args as a failure from being offline:' +
+                    '\n[{"responseText":0,"status":0,"readyState":"","statusText":"error"},"error","",""]');
+        resultCallback(false);
+        return;
+      }
+    }
+    
+    //At this point it looks like we're probably offline, but to actually assure we're online, we get some data over the network
+    
     // Just because the browser says we're online doesn't mean we're online. The browser lies.
     // Check to see if we are really online by making a call for a static JSON resource on
     // the originating Web site. If we can get to it, we're online. If not, assume we're
     // offline.
     $.ajax({
-      cache: false,
-      timeout: 2800, //you could decrese this, and automatically assume offline if the internet is just CRAWLING
-      url: location.protocol + '//' + location.hostname + '/onlineCheck.' + Math.random() * 99999999999999999 + '.css'
+      /* cache: false, //Omitted because cachebusting via querystring is unreliable.
+         some proxy servers only update a cache if the filename changes, not a querystring.
+         There's a apache rule to resolve the random number places in the url in the HTML5 BoilerPlate .htaccess file */
+      
+      timeout: 2800, //you could decrese this, and automatically assume offline if the internet is just CRAWLING - this may already be too low
+      
+      url: location.protocol '//' + location.hostname + '/onlineCheck.' + Math.random() * 99999999999999999 + '.json'
     })
     .done(function onlineCheckDone(resp) {
-      if (resp.indexOf('success') > -1) {
-        resultCallback(true);
+      if (resp === 'online') {
+        resultCallback(true); //ZOMG ONLINE
       } else {
         resultCallback(false);
       }
@@ -33,12 +78,21 @@ var checkOnline = function checkOnlineF(resultCallback) {
     .fail(function onlineCheckFail(xhr) {
       // We might not be technically "offline" if the error is not a timeout, but
       // otherwise we're getting some sort of error when we shouldn't, so we're
-      // going to treat it as if we're offline.
+      // going to treat it as if we're offline. Perhaps the server is down.
       // Note: This might not be totally correct if the error is because the
       // manifest is ill-formed.
+      
+      //Search: is there a super reliable CORS responsive endpoint that the library could use?
+      //Then we could verify online/offline status w/o the file, and can also discover if the server is down vs no internet
       resultCallback(false);
     });
   } else {
     resultCallback(false);
   }
+};
+
+var checkOffline = function checkOfflineFn(resultCallback) {
+  checkOnline(function(online) {
+    resultCallback(!online);
+  })
 };
