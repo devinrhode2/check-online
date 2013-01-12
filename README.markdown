@@ -17,18 +17,18 @@ $window.on('offline', function nowOffline() {});
 $window.on('online', function nowOnline() {});
 ```
 
-github.com/devinrhode2/check-online MIT licensened
+https://github.com/devinrhode2/check-online MIT license
 
-Originally by Rob: http://ednortonengineeringsociety.blogspot.com/2010/10/detecting-offline-status-in-html-5.html
-When you're working with a jQuery ajax failure, you can pass the fail callback `arguments`
-as a second parameter to check offline, to potentially short circuit the operation
-- if the failure looks like it was from being offline, we'll double check you're offline
-- if the args describe an ajax or other error, you're online (therefore, you might want to track and report this ajax error)
-- if you omit this second arg, things work just as expected.
+Originally by Rob: http://ednortonengineeringsociety.blogspot.com/2010/10/detecting-offline-status-in-html-5.html<br>
+When you're working with a jQuery ajax failure, you can pass the fail callback `arguments`<br>
+as a second parameter to check offline, to potentially short circuit the operation<br>
+- if the failure looks like it was from being offline, we'll double check you're offline<br>
+- if the args describe an ajax or other error, you're online (therefore, you might want to track and report this ajax error)<br>
+- if you omit this second arg, things work just as expected.<br>
 
-!IMPORTANT expects /onlineCheck.json to contain just 'online'
-Your server also needs to support filename based cache busting, which html5 boilerplate's .htaccess file has for you
-but you will need to add json to the list of file extensions list.
+!IMPORTANT expects /onlineCheck.json to contain just 'online'<br>
+Your server also needs to support filename based cache busting, which html5 boilerplate's .htaccess file has for you<br>
+but you will need to add json to the list of file extensions list.<br>
 ```javascript
  */
 var checkOnline = function checkOnlineF(resultCallback, jQueryXhrFailArgs) {
