@@ -5,7 +5,7 @@ checkOnline(function(online) {
   if (online) {
     //yay!
   } else {
-    //offline
+    //offline boo :(
   }
 });
 ```
