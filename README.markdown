@@ -20,6 +20,7 @@ $window.on('online', function nowOnline() {});
 https://github.com/devinrhode2/check-online MIT license
 
 Originally by Rob: http://ednortonengineeringsociety.blogspot.com/2010/10/detecting-offline-status-in-html-5.html<br>
+
 When you're working with a jQuery ajax failure, you can pass the fail callback `arguments`<br>
 as a second parameter to check offline, to potentially short circuit the operation<br>
 - if the failure looks like it was from being offline, we'll double check you're offline<br>
