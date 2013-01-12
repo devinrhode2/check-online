@@ -3,7 +3,7 @@
 ```javascript
 checkOnline(function(online) {
   if (online) {
-    //online
+    //yay!
   } else {
     //offline
   }
