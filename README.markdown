@@ -27,7 +27,8 @@ as a second parameter to check offline, to potentially short circuit the operati
 - if the args describe an ajax or other error, you're online (therefore, you might want to track and report this ajax error)<br>
 - if you omit this second arg, things work just as expected.<br>
 
-!IMPORTANT expects /onlineCheck.json to contain just 'online'<br>
+**IMPORTANT!** this javascript expects you to have a file `onlineCheck.json` to exist at the root of your website and contain just the text `online` in the file<br>
+
 Your server also needs to support filename based cache busting, which html5 boilerplate's .htaccess file has for you<br>
 but you will need to add json to the list of file extensions list.<br>
 ```javascript
