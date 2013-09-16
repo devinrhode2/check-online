@@ -119,3 +119,7 @@ var checkOffline = function checkOfflineFn(resultCallback) {
 /*
 ```
 */
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/devinrhode2/check-online/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
